@@ -20,15 +20,15 @@ database.connect((error) => {
 app.use(express.urlencoded({extended:true}))
 //ROUTE WHICH IS RESPONSIBLE TO DISPLAY HTML FILE
 app.get('/',(req,res) => {
-    const htmlfile = path.join(__dirname,'index.html');
+    const htmlfile = path.join(__dirname,'frontend\components\register.html');
     res.sendFile(htmlfile)
 })
 //ROUTE FOR HANDLING FORM SUBMISSIONS
-app.post('/handleform',(req,res) => {
+app.post('/regForm',(req,res) => {
    try{
         const {name,email,password} = req.body;
-        const SQL_COMMAND = "INSERT INTO usersdetails (name,email,password) VALUES (?,?,?)";
-        database.query(SQL_COMMAND,[name,email,password],(err,result) => {
+        const SQL_COMMAND = "INSERT INTO userdetails (username,email,password) VALUES (?,?,?)";
+        database.query(SQL_COMMAND,[username,email,password],(err,result) => {
             if(err){
                 console.error(err);
                 return res.send("Registration unsuccessful")
