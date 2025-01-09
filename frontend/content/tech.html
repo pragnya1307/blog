@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech</title>
+    <style>
+            /* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+/* Hero Section */
+.hero {
+  background: #f39c12;
+  color: #fff;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.2rem;
+}
+
+/* Content Section */
+.container {
+  max-width: 1700px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 2rem;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card img {
+  width: 60%;
+  height: auto;
+  display: block;
+}
+
+.card h2 {
+  font-size: 30px;
+  margin: 1rem;
+}
+
+.card p {
+  margin: 0 1rem 1rem;
+  font-size: 25px;
+}
+.card a {
+  display: inline-block;
+  margin: 0 1rem 1rem;
+  padding: 0.5rem 1rem;
+  background: #f39c12;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.card a:hover {
+  background: #d35400;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 1rem;
+  background: #222;
+  color: #fff;
+  margin-top: 2rem;
+}
+    </style>
+</head>
+<body>
+    <main class="container">
+        <section class="hero">
+          <h1>Exploring the Future of Tech</h1>
+          <p>From AI advancements to groundbreaking gadgets, discover how technology is reshaping our lives. Stay ahead with the latest trends, reviews, and innovations that are driving the future.</p>
+        </section>
+      
+        <section class="content">
+          <article class="card">
+            <img src="c_img/ai.jpg" alt="Artificial Intelligence">
+            <h2>The Rise of AI: Revolutionizing Industries</h2>
+            <p>Explore how artificial intelligence is transforming everything from healthcare to entertainment.</p>
+            <a href="https://fastercapital.com/topics/the-rise-of-a1-and-its-impact-on-technology.html">Read More</a>
+          </article>
+          <article class="card">
+            <img src="c_img/smartphone.jpg" alt="Smartphone Reviews">
+            <h2>2024's Best Smartphones: Our Top Picks</h2>
+            <p>Looking for a new phone? Check out our expert reviews of the best smartphones on the market this year.</p>
+            <a href="https://www.techadvisor.com/article/724318/best-smartphone.html">Read More</a>
+          </article>
+          <article class="card">
+            <img src="c_img/ftech.jpg" alt="Future Technology">
+            <h2>Future Tech: What’s Next?</h2>
+            <p>Take a look at the technologies that will define the next decade, from smart cities to quantum computing.</p>
+            <a href="https://www.simplilearn.com/top-technology-trends-and-jobs-article">Read More</a>
+          </article>
+        </section>
+      </main>
+      
+    
+      <footer>
+        <p>&copy; 2024 Pragnya. All rights reserved.</p>
+      </footer>
+
+</body>
+</html>
