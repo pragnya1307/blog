@@ -79,7 +79,7 @@
 
         .login-btn {
             width: 100%;
-            background-color: #28a745;
+            background-color: #11d23e;
             color: #fff;
             padding: 10px;
             border: none;
@@ -121,64 +121,82 @@
                 <button type="submit" class="submit-btn">Register</button>
             </form>
             
-            <button id="loginButton" class="login-btn"><a href="frontend\components\login.html">Login</a></button>
+            <button id="loginButton" class="login-btn"><a href="frontend/components/login.html">Login</a></button>
         </div>
-  
-
-    <script type="module">
-        const form = document.getElementById('regForm');
-        const loginButton = document.getElementById('loginButton');
-
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            let isValid = true;
-
-            // Validate username
-            const username = document.getElementById('username').value;
-            const usernameError = document.getElementById('usernameError');
-            if (username.length < 3) {
-                usernameError.textContent = 'Username must be at least 3 characters long.';
-                isValid = false;
-            } else {
-                usernameError.textContent = '';
-            }
-
-            // Validate email
-            const email = document.getElementById('email').value;
-            const emailError = document.getElementById('emailError');
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                emailError.textContent = 'Please enter a valid email address.';
-                isValid = false;
-            } else {
-                emailError.textContent = '';
-            }
-
-            // Validate password
-            const password = document.getElementById('password').value;
-            const passwordError = document.getElementById('passwordError');
-            if (password.length < 4) {
-                passwordError.textContent = 'Password must be at least 4 characters long.';
-                isValid = false;
-            } else {
-                passwordError.textContent = '';
-            }
-
-            if (isValid) {
-                alert('Registration successful!');
-                form.reset();
-
-                // Show the login button
-                loginButton.style.display = 'block';
-            }
-        });
-
-        // Optional: Add a click event to the login button
-        loginButton.addEventListener('click', () => {
-            alert('Redirecting to login page...');
-            window.location.href = 'http://127.0.0.1:5500/frontend/components/login.html'; // Replace with your actual login page URL
-        });
-    </script>
-</body>
+        <script type="module">
+            const form = document.getElementById('regForm');
+            const loginButton = document.getElementById('loginButton');
+        
+            form.addEventListener('submit', async function (event) {
+                event.preventDefault();
+        
+                let isValid = true;
+        
+                // Validate username
+                var username = document.getElementById('username').value;
+                console.log(username);
+                var usernameError = document.getElementById('usernameError');
+                if (username.length < 3) {
+                    usernameError.textContent = 'Username must be at least 3 characters long.';
+                    isValid = false;
+                } else {
+                    usernameError.textContent = '';
+                }
+        
+                // Validate email
+                var email = document.getElementById('email').value;
+                var emailError = document.getElementById('emailError');
+                var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    emailError.textContent = 'Please enter a valid email address.';
+                    isValid = false;
+                } else {
+                    emailError.textContent = '';
+                }
+        
+                // Validate password
+                var password = document.getElementById('password').value;
+                var passwordError = document.getElementById('passwordError');
+                if (password.length < 4) {
+                    passwordError.textContent = 'Password must be at least 4 characters long.';
+                    isValid = false;
+                } else {
+                    passwordError.textContent = '';
+                }
+        
+                if (isValid) {
+                    try {
+                        console.log({ username, password });
+                        const response = await fetch('http://localhost:4000/regForm', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ username, password }),
+                        });
+        
+                        const result = await response.text();
+        
+                        if (response.ok) {
+                            alert('Registration successful!');
+                            form.reset();
+                            loginButton.style.display = 'block';
+                        } else {
+                            alert('Registration failed: ' + result);
+                        }
+                    } catch (err) {
+                        console.error('Error:', err);
+                        alert('An error occurred during registration.');
+                    }
+                }
+            });
+        
+            // Optional: Add a click event to the login button
+            loginButton.addEventListener('click', () => {
+                alert('Redirecting to login page... ');
+                window.location.href = 'http://localhost:4000/components/login.html'; // Replace with your actual login page URL
+            });
+        </script>
+        
+    </body>
 </html>

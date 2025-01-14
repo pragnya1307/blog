@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog Login Form</title>
-   
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -42,7 +43,8 @@
             font-weight: bold;
         }
 
-        input[type="text"], input[type="password"] {
+        input[type="text"],
+        input[type="password"] {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
@@ -81,7 +83,9 @@
             margin-top: 10px;
             font-size: 14px;
         }
-        #logoutBtn, #writeBtn {
+
+        #logoutBtn,
+        #writeBtn {
             display: none;
             margin: 10px;
             padding: 10px 20px;
@@ -90,11 +94,14 @@
             border: none;
             cursor: pointer;
         }
-        #logoutBtn:hover, #writeBtn:hover {
+
+        #logoutBtn:hover,
+        #writeBtn:hover {
             background-color: #0056b3;
         }
     </style>
 </head>
+
 <body>
     <div class="login-container">
         <h1>Blog Login</h1>
@@ -112,31 +119,57 @@
         <button id="logoutBtn">Logout</button>
         <button id="writeBtn"><a href="write.html">Go to Write page</a></button>
 
-    <p id="message"></p>
+        <p id="message"></p>
     </div>
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', async function (e) { // Add async here
             e.preventDefault();
 
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
             // Simple validation
-            if (username === "admin" && password === "password") {
-                document.getElementById('message').textContent = "Login successful!";
-                document.getElementById('message').style.color = "green";
-                
-                // Hide login form and show logout and write buttons
-                document.getElementById('loginForm').style.display = "none";
-                document.getElementById('logoutBtn').style.display = "inline-block";
-                document.getElementById('writeBtn').style.display = "inline-block";
-            } else {
-                document.getElementById('message').textContent = "Invalid username or password.";
-                document.getElementById('message').style.color = "red";
+            // if (username === "admin" && password === "password") {
+            //     document.getElementById('message').textContent = "Login successful!";
+            //     document.getElementById('message').style.color = "green";
+
+            //     // Hide login form and show logout and write buttons
+            //     document.getElementById('loginForm').style.display = "none";
+            //     document.getElementById('logoutBtn').style.display = "inline-block";
+            //     document.getElementById('writeBtn').style.display = "inline-block";
+            // } else {
+            //     document.getElementById('message').textContent = "Invalid username or password.";
+            //     document.getElementById('message').style.color = "red";
+            // }
+
+            try {
+                console.log({ username, password });
+                const response = await fetch('http://localhost:4000/loginForm', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                const result = await response.text();
+                console.log(result);
+
+                if (response.ok) {
+                    alert('Login successful!');
+                    e.target.reset();
+                    window.location.href = 'http://localhost:4000/indexlogout.html';
+                    
+                } else {
+                    alert('Login failed: ' + result);
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                alert('An error occurred during login.');
             }
         });
 
-        document.getElementById('logoutBtn').addEventListener('click', function() {
+        document.getElementById('logoutBtn').addEventListener('click', function () {
             // Reset the UI for login
             document.getElementById('message').textContent = "You have logged out.";
             document.getElementById('message').style.color = "red";
@@ -149,12 +182,13 @@
             document.getElementById('password').value = "";
         });
 
-        document.getElementById('writeBtn').addEventListener('click', function() {
+        document.getElementById('writeBtn').addEventListener('click', function () {
             // Redirect to the "Write" page
-            window.location.href = "http://127.0.0.1:5500/frontend/components/write.html";
-
+            window.location.href = 'http://localhost:4000/components/write.html';
         });
+
     </script>
 
 </body>
+
 </html>

@@ -26,8 +26,10 @@ header{
 .mid{
   background-color: rgba(0, 157, 255, 0.562);
     display: block;
-    width: 65%;
+    width: 70%;
     margin: 20px auto;
+    justify-content: space-between;
+    
 
 }
 .right{
@@ -55,7 +57,7 @@ header{
 .btn{
     margin: opx 9px;
     background-color: white;
-    color: red;
+    color: purple;
     padding: 4px 14px;
     border: 2px solid blue;
     border-radius: 10px;
@@ -165,12 +167,12 @@ header{
     padding: 100px;
     border-radius: 20px;
     width: 100%;
-    margin-top: 100px;
-    height: 550px;
+    margin-top: 40px;
+    height: 350px;
 }
 .intro h1{
   text-decoration: none ;
-  font-size: 50px;
+  font-size: 40px;
   font-weight: 300;
 }
 

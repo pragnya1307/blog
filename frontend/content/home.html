@@ -38,7 +38,6 @@
     .post-content p {
       line-height: 1.8;
     }
-    
   </style>
 </head>
 <body>
@@ -48,37 +47,10 @@
   </div>
 
   <script type="module">
-    const mockApiResponse = [
-      {
-        "title": "Waterfall",
-        "content": "A waterfall is nature's spectacular display of grace and power. Water cascades down from great heights, carving its path through rugged cliffs and rocks. The thunderous sound of falling water resonates like nature’s symphony. Mist rises, creating a refreshing spray that cools and invigorates those nearby. Rainbows often form in the sunlight, adding a magical touch to the scene. The energy of a waterfall symbolizes unyielding strength and continuous motion. It sustains life downstream, providing habitats and nourishment to countless species. Iconic waterfalls, like Niagara and Angel Falls, captivate millions of visitors worldwide. Sitting near a waterfall brings an unparalleled sense of tranquility and wonder. Each waterfall, regardless of its size, is a testament to the raw beauty and power of water.",
-        "image_url": "c_img/waterfall.jpg",
-        "created_at": "2024-12-20T12:00:00Z"
-      },
-      {
-        "title": "Nature",
-        "content": "Nature is a magnificent tapestry woven with life, colors, and rhythms. It encompasses vast forests, majestic mountains, sprawling deserts, and endless oceans. Each element of nature works in harmony to sustain the delicate balance of life on Earth. From the gentle rustle of leaves to the powerful roar of thunder, nature’s sounds evoke a sense of peace and awe. Its beauty inspires art, poetry, and wonder, while its resilience teaches valuable lessons. Nature provides us with fresh air, clean water, and the food we need to survive. Exploring its depths often reveals secrets yet to be understood. Its healing power restores weary souls and offers solace to troubled minds. Nature is not just a backdrop to our lives but a vital force that shapes our existence. To cherish and protect it is to preserve the essence of life itself.",
-        "image_url": "c_img/nature.jpg",
-        "created_at": "2024-12-22T14:00:00Z"
-      },
-      {
-        "title": "Northern Lights",
-        "content": "The Northern Lights, or Aurora Borealis, are a breathtaking celestial phenomenon. These vibrant displays of dancing lights occur when solar particles collide with Earth's atmosphere. Shades of green, pink, purple, and blue illuminate the night sky, creating a surreal spectacle. The phenomenon is most visible near polar regions, such as Norway, Iceland, and Alaska. Ancient cultures often viewed the lights as divine messages or omens. Modern science explains them as a natural interaction of solar winds with the magnetic field. Watching the Northern Lights is an experience that evokes awe and a sense of cosmic connection. Silence amplifies the otherworldly beauty as the lights weave and shift across the heavens. It is a reminder of Earth's small place in the vast universe. The Northern Lights inspire dreams, curiosity, and a profound appreciation for the mysteries of space.",
-        "image_url": "c_img/northernlights.jpg",
-        "created_at": "2024-12-25T12:00:00Z"
-      },
-      {
-        "title": "Cherry Blossoms",
-        "content": "Cherry blossoms are the epitome of fleeting beauty and renewal. These delicate pink and white flowers bloom in spring, transforming landscapes into scenes of pure poetry. In Japan, they are celebrated during the festival of Hanami, symbolizing the transient nature of life. Underneath the blossoming trees, people gather to picnic, reflect, and appreciate the season’s charm. The sight of cherry blossoms evokes feelings of serenity, hope, and nostalgia. Their soft petals flutter gracefully in the breeze, creating a dreamlike atmosphere. Cherry blossoms are not only beautiful but also a symbol of cultural significance in many regions. As they fall to the ground, they remind us of the cycle of life and the beauty in impermanence. Parks and avenues adorned with cherry blossoms attract visitors from all over the world. Their brief yet spectacular bloom leaves an indelible mark on hearts and minds.",
-        "image_url": "c_img/cherryblossom.jpg",
-        "created_at": "2024-12-29T12:00:00Z"
-      }
-    ];
-
     async function fetchPosts() {
       try {
-        // Simulating fetching posts (replace with actual fetch in production)
-        const posts = mockApiResponse;
+        const response = await fetch('/postForm'); // Change to actual endpoint
+        const posts = await response.json();
 
         const postsContainer = document.getElementById('posts-container');
         postsContainer.innerHTML = ''; // Clear previous posts if any
@@ -92,7 +64,7 @@
           const postDiv = document.createElement('div');
           postDiv.className = 'post';
           postDiv.innerHTML = `
-            <img src="${post.image_url || 'default-image.jpg'}" alt="${post.title}" class="post-image">
+            <img src="/uploads/${post.image}" alt="${post.title}" class="post-image">
             <div class="post-content">
               <h3>${post.title}</h3>
               <p>Uploaded on ${new Date(post.created_at).toLocaleDateString()}</p>
