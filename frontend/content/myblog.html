@@ -84,7 +84,7 @@ button:hover {
               <h3>${post.title}</h3>
               <p>Uploaded on ${new Date(post.created_at).toLocaleDateString()}</p>
               <p>${post.content}</p>
-              <button onclick="updatepost(${post.id})"><a href="./update.html"</a>Update</button>
+              <button><a href="/update.html?id=${post.id}" style="text-decoration: none; color: white;">Update</a></button>
               <button onclick="deletepost(${post.id})">Delete</button>
             </div>
           `;

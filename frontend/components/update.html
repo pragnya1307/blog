@@ -84,7 +84,7 @@
 <body>
   <div class="container">
     <h1>Update Blog Post</h1>
-    <form id="postForm">
+    <form id="updateForm">
       <div class="form-group">
         <label for="newTitle">Post Title:</label>
         <input type="text" id="title" name="title" placeholder="Enter post title" required>
@@ -102,3 +102,75 @@
     <h2>Blog Posts</h2>
     <div id="blogPosts"></div>
   </div>
+  <script type="module">
+    async function getPostDetails() {
+      const params = new URLSearchParams(window.location.search);
+      const postId = params.get('id');
+  
+      if (!postId) {
+        alert('Invalid post ID.');
+        window.location.href = './myblog.html';
+        return;
+      }
+  
+      try {
+        const response = await fetch(`http://localhost:4000/updateForm`);
+        const post = await response.json();
+  
+        if (!response.ok) {
+          throw new Error(post.message || 'Failed to fetch post details');
+        }
+  
+        document.getElementById('title').value = post.title;
+        document.getElementById('content').value = post.content;
+        // Handle image display or replacement if needed
+      } catch (error) {
+        console.error('Error fetching post details:', error);
+        alert('Failed to load post details.');
+        window.location.href = './myblog.html';
+      }
+    }
+  
+    document.getElementById('postForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+  
+      const params = new URLSearchParams(window.location.search);
+      const postId = params.get('id');
+  
+      const title = document.getElementById('title').value;
+      const content = document.getElementById('content').value;
+      const image = document.getElementById('image').files[0];
+  
+      if (!title || !content) {
+        alert('Title and content are required.');
+        return;
+      }
+  
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('content', content);
+      if (image) formData.append('image', image);
+  
+      try {
+        const response = await fetch(`http://localhost:4000/updateForm`, {
+          method: 'PUT',
+          body: formData,
+        });
+  
+        if (response.ok) {
+          alert('Post updated successfully.');
+          window.location.href = './myblog.html';
+        } else {
+          const error = await response.json();
+          alert(error.message || 'Failed to update post.');
+        }
+      } catch (error) {
+        console.error('Error updating post:', error);
+        alert('Failed to update post.');
+      }
+    });
+  
+    // Fetch post details on page load
+    getPostDetails();
+  </script>
+  
