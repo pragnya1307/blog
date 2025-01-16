@@ -57,7 +57,7 @@ button:hover {
 </head>
 <body>
   <div class="content">
-    <h1>See all posts</h1>
+    <h1>Welcome to My Blog</h1>
     <div id="posts-container"></div>
   </div>
 
@@ -84,6 +84,8 @@ button:hover {
               <h3>${post.title}</h3>
               <p>Uploaded on ${new Date(post.created_at).toLocaleDateString()}</p>
               <p>${post.content}</p>
+              <button onclick="updatepost(${post.id})"><a href="./update.html"</a>Update</button>
+              <button onclick="deletepost(${post.id})">Delete</button>
             </div>
           `;
           postsContainer.appendChild(postDiv);
@@ -93,6 +95,55 @@ button:hover {
       }
     }
   
+    async function deletepost(postId) {
+      try {
+        const response = await fetch(`http://localhost:4000/postForm`, {
+          method: 'DELETE',
+        });
+  
+        if (response.ok) {
+          alert('Post deleted successfully.');
+          fetchPosts(); // Refresh posts after deletion
+        } else {
+          alert('Failed to delete post.');
+        }
+      } catch (error) {
+        console.error('Error deleting post:', error);
+      }
+    }
+  
+    async function updatepost(postId) {
+      const newTitle = prompt('Enter new title:');
+      const newContent = prompt('Enter new content:');
+  
+      if (!newTitle || !newContent) {
+        alert('Title and content are required.');
+        return;
+      }
+  
+      try {
+        const response = await fetch(`http://localhost:4000/postForm`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: newTitle,
+            content: newContent,
+            image: newImage
+          }),
+        });
+  
+        if (response.ok) {
+          alert('Post updated successfully.');
+          fetchPosts(); // Refresh posts after update
+        } else {
+          alert('Failed to update post.');
+        }
+      } catch (error) {
+        console.error('Error updating post:', error);
+      }
+    }
   
     // Load posts on page load
     fetchPosts();

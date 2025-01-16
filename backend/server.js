@@ -1,3 +1,4 @@
+const multer = require('multer');
 const express = require('express');
 const path = require('path');
 const mysql2 = require('mysql2');
@@ -20,11 +21,14 @@ database.connect((error) => {
 //MIDDLEWARE FOR PARSING THE FORM DETAILS;
 app.use(express.urlencoded({extended:true}))
 app.use(express.static(path.join(__dirname, '../frontend')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 //ROUTE WHICH IS RESPONSIBLE TO DISPLAY HTML FILE
 app.get('/',(req,res) => {
     const htmlfile = path.join(__dirname,'../frontend/index.html');
     res.sendFile(htmlfile)
 })
+
 //ROUTE FOR HANDLING FORM SUBMISSIONS FOR REGISTER
 app.post('/regForm',(req,res) => {
    try{
@@ -79,27 +83,6 @@ app.post('/loginForm', (req, res) => {
     }
 });
 
-// ROUTE FOR HANDLING POSTS
-// app.post('/postForm',(req,res) => {
-//     try{
-//          const {title,content} = req.body;
-//          console.log(req.body);
-//          const SQL_COMMAND = "INSERT INTO posts (title,content) VALUES (?,?)";
-//          database.query(SQL_COMMAND,[title,content],(err,result) => {
-//              if(err){
-//                  console.error(err);
-//                  return res.send("Post display unsuccessful")
-//              }
-//              console.log(result);
-//              res.send("Post display successful")
-//          })
-//     }
-//     catch(err){
-//      console.error(err);
-//      res.send("Post display Unsuccessful")
-//     }
-//  }) 
-
  //ROUTE FOR HANDLING LOGOUT
  app.post('/logout', (req, res) => {
     try {
@@ -114,7 +97,6 @@ app.post('/loginForm', (req, res) => {
     }
 });
 
-const multer = require('multer');
 
 // Set up multer for file uploads
 const storage = multer.diskStorage({
@@ -152,44 +134,62 @@ app.post('/postForm', upload.single('image'), (req, res) => {
     res.send("Post submission unsuccessful");
   }
 });
+
 //ROUTE FOR DELETING POSTS
 app.delete('/postForm', (req, res) => {
-    const { user_id, title } = req.body;
-  
-    const SQL_COMMAND = "DELETE FROM posts WHERE user_id = ? AND title = ?";
-    database.query(SQL_COMMAND, [user_id, title], (err, result) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).send("Failed to delete post");
-      }
-      if (result.affectedRows === 0) {
-        return res.status(404).send("Post not found or unauthorized");
-      }
-      res.send("Post deleted successfully");
-    });
+  const { user_id, title } = req.body;
+
+  const SQL_COMMAND = "DELETE FROM posts WHERE user_id = ? AND title = ?";
+  database.query(SQL_COMMAND, [user_id, title], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send("Failed to delete post");
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).send("Post not found or unauthorized");
+    }
+    res.send("Post deleted successfully");
   });
+});
+
 
 //ROUTE FOR UPDATING POSTS
 app.put('/postForm', (req, res) => {
-    const { user_id, title, newTitle, newContent, newImage } = req.body;
+  const { title, newTitle, newContent, newImage } = req.body;
+
+  const SQL_COMMAND = `
+    UPDATE posts
+    SET title = ?, content = ?, image = ?
+    WHERE title = ?
+  `;
+  database.query(SQL_COMMAND, [newTitle, newContent, title], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send("Failed to update post");
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).send("Post not found");
+    }
+    res.send("Post updated successfully");
+  });
+});
   
-    const SQL_COMMAND = `
-      UPDATE posts 
-      SET title = ?, content = ?, image = ?
-      WHERE user_id = ? AND title = ?
-    `;
-    database.query(SQL_COMMAND, [newTitle, newContent, newImage, user_id, title], (err, result) => {
+// ROUTE FOR DISPLAYING POSTS
+app.get('/display', (req, res) => {
+  try {
+    const SQL_COMMAND = "SELECT title, content, image, created_at FROM posts"; 
+    database.query(SQL_COMMAND, (err, result) => {
       if (err) {
         console.error(err);
-        return res.status(500).send("Failed to update post");
+        return res.status(500).send("Error fetching posts");
       }
-      if (result.affectedRows === 0) {
-        return res.status(404).send("Post not found or unauthorized");
-      }
-      res.send("Post updated successfully");
+      res.json(result); 
     });
-  });
-  
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 
 app.listen(4000,() => {

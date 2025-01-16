@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -125,7 +125,7 @@
           });
           if (response.ok) {
             alert("Post created successfully!");
-            location.reload();
+            window.location.href = 'http://localhost:4000/content/home.html';
           } else {
             alert("Failed to create post.");
           }
@@ -160,50 +160,54 @@
           postImage.style.maxWidth = '100%';
           postImage.style.marginTop = '10px';
 
-          const deleteButton = document.createElement('button');
-          deleteButton.textContent = 'Delete';
-          deleteButton.addEventListener('click', async () => {
-            try {
-              const response = await fetch('/posts', {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title: post.title }),
-              });
-              if (response.ok) {
-                alert("Post deleted successfully");
-                loadPosts();
-              } else {
-                alert("Failed to delete post.");
-              }
-            } catch (error) {
-              console.error("Error:", error);
-            }
-          });
+//ADD DELETE BUTTON
+deleteButton.addEventListener('click', async () => {
+  try {
+    const response = await fetch('/postForm', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: post.title }),
+    });
+    if (response.ok) {
+      alert("Post deleted successfully");
+      loadPosts();
+    } else {
+      alert("Failed to delete post.");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  }
+});
 
-          const updateButton = document.createElement('button');
-          updateButton.textContent = 'Update';
-          updateButton.addEventListener('click', async () => {
-            const newTitle = prompt("Enter new title:", post.title);
-            const newContent = prompt("Enter new content:", post.content);
 
-            if (newTitle && newContent) {
-              try {
-                const response = await fetch('/posts', {
-                  method: 'PUT',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ title: post.title, newTitle, newContent }),
-                });
-                if (response.ok) {
-                  alert("Post updated successfully");
-                  loadPosts();
-                } else {
-                  alert("Failed to update post.");
-                }
-              } catch (error) {
-                console.error("Error:", error);
-              }
-            }
-          });
+//ADD UPDATE BUTTON
+updateButton.addEventListener('click', async () => {
+  const newTitle = prompt("Enter new title:", post.title);
+  const newContent = prompt("Enter new content:", post.content);
+
+  if (newTitle && newContent) {
+    try {
+      const response = await fetch('/postForm', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: post.title,
+          newTitle,
+          newContent,
+          newImage: post.image || null, // Optional if no image update
+        }),
+      });
+      if (response.ok) {
+        alert("Post updated successfully");
+        loadPosts();
+      } else {
+        alert("Failed to update post.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+});
 
           newPost.appendChild(postTitle);
           newPost.appendChild(postContent);
