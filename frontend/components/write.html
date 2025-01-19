@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blog - New Post</title>
-  
   <style>
+    /* Your existing styles */
     body {
       font-family: Arial, sans-serif;
       background-color: #0782f444;
@@ -58,33 +59,16 @@
     button:hover {
       background-color: #1a2873;
     }
-
-    .post {
-      border-bottom: 1px solid #ddd;
-      padding: 10px 0;
-    }
-
-    .post h3 {
-      margin: 0;
-      color: #007bff;
-    }
-
-    .post p {
-      margin: 5px 0 0;
-      color: #555;
-    }
-
-    .post button {
-      margin-top: 10px;
-      margin-right: 10px;
-      width: auto;
-    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Create a New Blog Post</h1>
     <form id="postForm">
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" placeholder="Enter your username" required>
+      </div>
       <div class="form-group">
         <label for="title">Post Title:</label>
         <input type="text" id="title" name="title" placeholder="Enter post title" required>
@@ -102,18 +86,20 @@
     <h2>Blog Posts</h2>
     <div id="blogPosts"></div>
   </div>
-  
+
   <script>
     async function handleFormSubmission(event) {
       event.preventDefault();
 
+      const username = document.getElementById('username').value;
       const title = document.getElementById('title').value;
       const content = document.getElementById('content').value;
       const imageInput = document.getElementById('image');
       const imageFile = imageInput.files[0];
 
-      if (title && content && imageFile) {
+      if (username && title && content && imageFile) {
         const formData = new FormData();
+        formData.append('username', username);
         formData.append('title', title);
         formData.append('content', content);
         formData.append('image', imageFile);
@@ -125,7 +111,7 @@
           });
           if (response.ok) {
             alert("Post created successfully!");
-            window.location.href = 'http://localhost:4000/content/home.html';
+            loadPosts();
           } else {
             alert("Failed to create post.");
           }
@@ -139,7 +125,7 @@
 
     async function loadPosts() {
       try {
-        const response = await fetch('/posts');
+        const response = await fetch('/display');
         const posts = await response.json();
 
         const postContainer = document.getElementById('blogPosts');
@@ -152,7 +138,7 @@
           postTitle.textContent = post.title;
 
           const postContent = document.createElement('p');
-          postContent.textContent = post.content;
+          postContent.textContent = `Posted by: ${post.username} - ${post.content}`;
 
           const postImage = document.createElement('img');
           postImage.src = post.image;
@@ -160,7 +146,7 @@
           postImage.style.maxWidth = '100%';
           postImage.style.marginTop = '10px';
 
-//ADD DELETE BUTTON
+          //ADD DELETE BUTTON
 deleteButton.addEventListener('click', async () => {
   try {
     const response = await fetch('/postForm', {
