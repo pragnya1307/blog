@@ -21,7 +21,7 @@ database.connect((error) => {
 //MIDDLEWARE FOR PARSING THE FORM DETAILS;
 app.use(express.urlencoded({extended:true}))
 app.use(express.static(path.join(__dirname, '../frontend')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 //ROUTE WHICH IS RESPONSIBLE TO DISPLAY HTML FILE
 app.get('/',(req,res) => {
@@ -97,7 +97,6 @@ app.post('/loginForm', (req, res) => {
     }
 });
 
-
 // Set up multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -113,82 +112,83 @@ const upload = multer({ storage });
 
 // ROUTE FOR HANDLING POSTS
 app.post('/postForm', upload.single('image'), (req, res) => {
-  try {
-    const { title, content } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : null; // File path for the uploaded image
+  const { username, title, content } = req.body;
+  const image = `/uploads/${req.file.filename}`;
 
-    console.log(req.body);
-    console.log('Uploaded file:', req.file);
-
-    const SQL_COMMAND = "INSERT INTO posts (title, content, image) VALUES (?, ?, ?)";
-    database.query(SQL_COMMAND, [title, content, image], (err, result) => {
-      if (err) {
-        console.error(err);
-        return res.send("Post submission unsuccessful");
-      }
-      console.log(result);
-      res.send("Post submission successful");
-    });
-  } catch (err) {
-    console.error(err);
-    res.send("Post submission unsuccessful");
-  }
+  const query = 'INSERT INTO posts (username, title, content, image) VALUES (?, ?, ?, ?)';
+  db.query(query, [username, title, content, image], (err, result) => {
+    if (err) {
+      console.error('Error inserting post:', err);
+      return res.status(500).send('Failed to create post');
+    }
+    res.status(201).send('Post created successfully');
+  });
+});
+app.get('/display', (req, res) => {
+  const query = 'SELECT username, title, content, image FROM posts ORDER BY created_at DESC';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching posts:', err);
+      return res.status(500).send('Error fetching posts');
+    }
+    res.json(results);
+  });
 });
 
 //ROUTE FOR DELETING POSTS
 app.delete('/postForm', (req, res) => {
-  const { user_id, title } = req.body;
-
-  const SQL_COMMAND = "DELETE FROM posts WHERE user_id = ? AND title = ?";
-  database.query(SQL_COMMAND, [user_id, title], (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send("Failed to delete post");
-    }
-    if (result.affectedRows === 0) {
-      return res.status(404).send("Post not found or unauthorized");
-    }
+  const { post_id } = req.query;
+  const SQL_COMMAND = "DELETE FROM posts WHERE post_id = ?";
+  database.query(SQL_COMMAND, [post_id], (err, result) => {
+    if (err) return res.status(500).send("Failed to delete post");
+    if (result.affectedRows === 0) return res.status(404).send("Post not found");
     res.send("Post deleted successfully");
   });
 });
 
-
 //ROUTE FOR UPDATING POSTS
-app.put('/postForm', (req, res) => {
-  const { title, newTitle, newContent, newImage } = req.body;
+app.put('/postForm', upload.single('image'), (req, res) => {
+  const { post_id } = req.query;
+  const { title, content } = req.body;
+  const image = req.file ? `/uploads/${req.file.filename}` : null;
+
+  if (!post_id) return res.status(400).json({ message: 'Post ID is required' });
 
   const SQL_COMMAND = `
     UPDATE posts
     SET title = ?, content = ?, image = ?
-    WHERE title = ?
+    WHERE post_id = ?
   `;
-  database.query(SQL_COMMAND, [newTitle, newContent, title], (err, result) => {
+  database.query(SQL_COMMAND, [title, content, image, post_id], (err, result) => {
     if (err) {
       console.error(err);
-      return res.status(500).send("Failed to update post");
+      return res.status(500).send('Failed to update post');
     }
     if (result.affectedRows === 0) {
-      return res.status(404).send("Post not found");
+      return res.status(404).send('Post not found');
     }
-    res.send("Post updated successfully");
+    res.send('Post updated successfully');
+  });
+});
+
+// ROUTE TO FETCH DETAILS OF A SINGLE POST
+app.get('/postForm/:post_id', (req, res) => {
+  const { post_id } = req.params;
+  const SQL_COMMAND = "SELECT * FROM posts WHERE post_id = ?";
+  database.query(SQL_COMMAND, [post_id], (err, results) => {
+    if (err) return res.status(500).send("Failed to fetch post details");
+    if (results.length === 0) return res.status(404).send("Post not found");
+    res.json(results[0]);
   });
 });
   
 // ROUTE FOR DISPLAYING POSTS
 app.get('/display', (req, res) => {
-  try {
-    const SQL_COMMAND = "SELECT title, content, image, created_at FROM posts"; 
-    database.query(SQL_COMMAND, (err, result) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).send("Error fetching posts");
-      }
-      res.json(result); 
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Internal Server Error");
-  }
+  const SQL_COMMAND = "SELECT post_id, title, content, image, created_at FROM posts";
+  database.query(SQL_COMMAND, (err, results) => {
+    if (err) return res.status(500).send("Error fetching posts");
+    res.json(results);
+  });
 });
 
 
