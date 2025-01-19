@@ -109,7 +109,7 @@
   
       if (!postId) {
         alert('Invalid post ID.');
-        window.location.href = './myblog.html';
+        window.location.href = 'http://localhost:4000/content/myblog.html';
         return;
       }
   
@@ -127,50 +127,51 @@
       } catch (error) {
         console.error('Error fetching post details:', error);
         alert('Failed to load post details.');
-        window.location.href = './myblog.html';
+        window.location.href = 'http://localhost:4000/content/myblog.html';
       }
     }
   
-    document.getElementById('postForm').addEventListener('submit', async (event) => {
-      event.preventDefault();
-  
-      const params = new URLSearchParams(window.location.search);
-      const postId = params.get('id');
-  
-      const title = document.getElementById('title').value;
-      const content = document.getElementById('content').value;
-      const image = document.getElementById('image').files[0];
-  
-      if (!title || !content) {
-        alert('Title and content are required.');
-        return;
-      }
-  
-      const formData = new FormData();
-      formData.append('title', title);
-      formData.append('content', content);
-      if (image) formData.append('image', image);
-  
-      try {
-        const response = await fetch(`http://localhost:4000/updateForm`, {
-          method: 'PUT',
-          body: formData,
-        });
-  
-        if (response.ok) {
-          alert('Post updated successfully.');
-          window.location.href = './myblog.html';
-        } else {
-          const error = await response.json();
-          alert(error.message || 'Failed to update post.');
-        }
-      } catch (error) {
-        console.error('Error updating post:', error);
-        alert('Failed to update post.');
-      }
+  document.getElementById('updateForm').addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const params = new URLSearchParams(window.location.search);
+  const postId = params.get('id'); // Get the post ID from the URL
+
+  const title = document.getElementById('title').value;
+  const content = document.getElementById('content').value;
+  const image = document.getElementById('image').files[0];
+
+  if (!title || !content) {
+    alert('Title and content are required.');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('content', content);
+  if (image) formData.append('image', image);
+
+  try {
+    const response = await fetch(`http://localhost:4000/postForm?id=${postId}`, {
+      method: 'PUT',
+      body: formData,
     });
+
+    if (response.ok) {
+      alert('Post updated successfully.');
+      window.location.href = 'http://localhost:4000/content/myblog.html'; // Redirect to blog homepage
+    } else {
+      const error = await response.json();
+      alert(error.message || 'Failed to update post.');
+    }
+  } catch (error) {
+    console.error('Error updating post:', error);
+    alert('Failed to update post.');
+  }
+});
   
-    // Fetch post details on page load
+// Fetch post details on page load
     getPostDetails();
   </script>
+  
   
